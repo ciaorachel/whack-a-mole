@@ -4,7 +4,11 @@
 	<title>whack-a-mole</title>
 	<style type="text/css">
 
-		.squares {
+		h1 {
+			text-align: center;
+		}
+
+		.square {
 			width: 200px;
 			height: 200px;
 			border: solid #eee 1px;
@@ -12,39 +16,95 @@
 			float: left;
 		}
 
+		.active {
+			background-color: black;
+		}
+
 		#gameboard {
 			width: 606px;
 			height: 606px;
-			border: 1px solid #999;
+			border: 1px solid black;
 		}
 
-		#active {
-			background-color: black;
+		#container {
+			margin: 0 auto;
+			width: 60%;
 		}
+
+
 
 	</style>
 </head>
 <body>
-	<div id="container">
+	
+		<div id="container">
+			<h1>Whack-a-mole</h1>
+			<button id="start">Begin</button>
+		
 		<div id="gameboard">
-			<div class="squares"></div>
-			<div class="squares"></div>
-			<div class="squares"></div>
-			<div class="squares"></div>
-			<div class="squares"></div>
-			<div class="squares"></div>
-			<div class="squares"></div>
-			<div class="squares"></div>
-			<div class="squares"></div>
+			<div class="square" id="0"></div>
+			<div class="square" id="1"></div>
+			<div class="square" id="2"></div>
+			<div class="square" id="3"></div>
+			<div class="square" id="4"></div>
+			<div class="square" id="5"></div>
+			<div class="square" id="6"></div>
+			<div class="square" id="7"></div>
+			<div class="square" id="8"></div>
 		</div>
 	</div>
-
 	<script src="/js/jquery.js"></script>
 	<script>
 	"use strict";
     $(document).ready(function () {
 
-    	
+    	// This is for the start button
+    	$("#start").click(function() {
+    		animateMole();
+    	})
+
+    	// This is for the animation, adding class of active
+    	function fadeInSquare(id) {
+    		$("#" + id).addClass("active")
+    		/* This animation not working --> $("#" + id).addClass("active").animate({backgroundColor: "black"}, );*/
+    	};
+
+    	function fadeOutSquare(id) {
+    		$("#" + id).removeClass("active");
+    	};
+
+
+    	// This is to animate the mole square
+    	function animateMole() {
+    		var square = $(".square");
+    		var selectRandomSquare = Math.floor(Math.random()*9);
+    		var randomSquare = square[selectRandomSquare];
+    		var id = randomSquare.getAttribute("id");
+    		fadeInSquare(id);
+    	}
+
+    	// This receives user click
+    	$(".square").click(function(e) {
+    		var clickedId = $(this).attr("id");
+    		var clickedIndex = $(this).index();
+	    	var randomSquare = $(this).hasClass("active");
+
+	    	if (randomSquare == true) {
+	    		fadeOutSquare(clickedId);
+	    		animateMole();
+	    	} else {
+	    	}
+
+	    	/*
+			// This timeout giving me trouble -- wanted to add to the if/else, but the alert fires whenever incorrect square is selected.
+	    	setTimeout (function() {
+	    		alert("Good effort!");
+	    		}, 1000);*/
+	    	
+	    	console.log("square clicked " + clickedId);
+    		console.log("square index " + clickedIndex);
+    		console.log("random square " + randomSquare);
+	    	});	
 
     });	
 	</script>
