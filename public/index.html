@@ -1,29 +1,67 @@
 <!DOCTYPE html>
 <html>
 <head>
-	<title>whack-a-mole</title>
+	<title>Whack A Mole Project</title>
+	<link rel="stylesheet" href="/css/bootstrap.min.css">
 	<style type="text/css">
-
 		h1 {
 			text-align: center;
+			font: #000000;
+			font-size: 2.5em;
+			color: #CC0000;
 		}
 
-		.square {
-			width: 200px;
-			height: 200px;
-			border: solid #eee 1px;
-			margin: 0;
-			float: left;
+		h2 {
+			color: #999999;
 		}
 
-		.active {
-			background-color: black;
+
+		#leftSide {
+			z-index: 5;
+			background-color: #FFF;
+		}
+
+		/*#rightSideContainer {
+			max-height: 768px;
+			min-width: 625px;
+			max-width: 1024px;
+			width: 100%;
+			position: fixed;
+			bottom: 0;
+			right: 0;
+		}*/
+		#rightSide {
+			background-image: url("/img/waldo-beach.png");
+			background-repeat: no-repeat;
+			background-position: relative;
+			height: 731px;
+			bottom: 0;
+			min-width: 700px;
+			max-width: 100%;
 		}
 
 		#gameboard {
-			width: 606px;
-			height: 606px;
-			border: 1px solid black;
+			width: 546px;
+			height: 560px;
+			/*border: 1px solid black;*/
+			position: absolute;
+			bottom: 0;
+			margin-left: 10%;
+			/*margin-right: 15px;*/
+		}
+
+		.square {
+			width: 180px;
+			height: 185px;
+			margin: 0;
+			float: left;
+/*			border: 1px solid black;
+*/		}
+
+		.active {
+			background-image: url("/img/waldo.png");
+			background-repeat: no-repeat;
+			background-position: top;
 		}
 
 		#container {
@@ -36,45 +74,62 @@
 	</style>
 </head>
 <body>
-	
-		<div id="container">
-			<h1>Whack-a-mole</h1>
-			<button id="start">Begin</button>
-		
-		<div id="gameboard">
-			<div class="square" id="0"></div>
-			<div class="square" id="1"></div>
-			<div class="square" id="2"></div>
-			<div class="square" id="3"></div>
-			<div class="square" id="4"></div>
-			<div class="square" id="5"></div>
-			<div class="square" id="6"></div>
-			<div class="square" id="7"></div>
-			<div class="square" id="8"></div>
+	<div class="container-fluid">
+		<div class="row">
+			<div class="col-md-3" id="leftSide">
+				<h1>Where's Waldo?</h1>
+				<h2>How many times can you find Waldo on this crowded beach?</h2>
+				<button id="start">Start</button>
+				<button id="counter"></button>
+				<button id="timer"></button>
+			</div>
+			<div class="col-md-9">
+				<div id="rightSide">
+				<div id="gameboard">
+					<div class="square" id="0"></div>
+					<div class="square" id="1"></div>
+					<div class="square" id="2"></div>
+					<div class="square" id="3"></div>
+					<div class="square" id="4"></div>
+					<div class="square" id="5"></div>
+					<div class="square" id="6"></div>
+					<div class="square" id="7"></div>
+					<div class="square" id="8"></div>
+				</div>
+				</div>
+			</div>
 		</div>
-	</div>
+	</div>		
 	<script src="/js/jquery.js"></script>
 	<script>
 	"use strict";
     $(document).ready(function () {
 
+    	var clicks = [];
+
     	// This is for the start button
     	$("#start").click(function() {
-    		animateMole();
+    		$(".square").removeClass("active");
+    		$(this).text("Restart");
+    		clicks = [];
+			animateMole();
+
+			var timer = 5;
+			var countdown = setInterval(function() {
+			    timer--;
+			    if (timer > 0) {
+			    	$("#timer").text(timer + " seconds");
+			    }
+
+			    if (timer == 0) {
+			        clearInterval(countdown);
+			        alert("Time's up! You got " + clicks.length + " points!");
+			    }
+			}, 1000);
+
     	})
 
-    	// This is for the animation, adding class of active
-    	function fadeInSquare(id) {
-    		$("#" + id).addClass("active")
-    		/* This animation not working --> $("#" + id).addClass("active").animate({backgroundColor: "black"}, );*/
-    	};
-
-    	function fadeOutSquare(id) {
-    		$("#" + id).removeClass("active");
-    	};
-
-
-    	// This is to animate the mole square
+	    // This is to animate the mole square
     	function animateMole() {
     		var square = $(".square");
     		var selectRandomSquare = Math.floor(Math.random()*9);
@@ -83,28 +138,29 @@
     		fadeInSquare(id);
     	}
 
+    	// This is for the animation, adding class of active
+    	function fadeInSquare(id) {
+    		$("#" + id).addClass("active");
+    	};
+
     	// This receives user click
     	$(".square").click(function(e) {
     		var clickedId = $(this).attr("id");
-    		var clickedIndex = $(this).index();
 	    	var randomSquare = $(this).hasClass("active");
-
 	    	if (randomSquare == true) {
 	    		fadeOutSquare(clickedId);
-	    		animateMole();
-	    	} else {
-	    	}
+	    		clicks += 1;
+	    		$("#counter").text("Points: " + (clicks.length));
+	    	} /*else {
+	    		alert("Game Over");
+	    		location.reload(true);
+	    	}*/
+	    });
 
-	    	/*
-			// This timeout giving me trouble -- wanted to add to the if/else, but the alert fires whenever incorrect square is selected.
-	    	setTimeout (function() {
-	    		alert("Good effort!");
-	    		}, 1000);*/
-	    	
-	    	console.log("square clicked " + clickedId);
-    		console.log("square index " + clickedIndex);
-    		console.log("random square " + randomSquare);
-	    	});	
+    	function fadeOutSquare(id) {
+    		$("#" + id).removeClass("active");
+    		animateMole();
+    	};
 
     });	
 	</script>
